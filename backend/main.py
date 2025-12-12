@@ -798,6 +798,15 @@ def serve_frontend():
     return {"message": "frontend/index.html not found"}
 
 
+@app.get("/history.html")
+def serve_history():
+    here = os.path.dirname(__file__)
+    path = os.path.join(here, "..", "frontend", "history.html")
+    if os.path.exists(path):
+        return FileResponse(path)
+    return {"message": "frontend/history.html not found"}
+
+
 @app.get("/health")
 def health():
     return {"status": "healthy", "service": "ai-trip-planner"}

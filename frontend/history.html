@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Travel History - Trip Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-neutral-50 text-neutral-900 antialiased font-[Inter]">
+  <!-- Nav -->
+  <header class="border-b border-neutral-200 bg-white/80 backdrop-blur sticky top-0 z-50">
+    <div class="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
+        <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-tr from-indigo-600 via-violet-600 to-fuchsia-600 text-white">
+          <i data-lucide="compass" class="h-5 w-5"></i>
+        </span>
+        <span class="text-lg font-semibold tracking-tight">Trip Planner</span>
+      </a>
+      <nav class="flex items-center gap-4">
+        <a href="/" class="text-sm text-neutral-600 hover:text-neutral-900 transition-colors">Plan Trip</a>
+        <a href="/history.html" class="text-sm font-medium text-neutral-900">History</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Page Header -->
+  <section class="mx-auto max-w-7xl px-6 pt-10 pb-6">
+    <div class="flex items-center justify-between flex-wrap gap-4">
+      <div>
+        <h1 class="text-3xl md:text-4xl font-semibold tracking-tight">Travel History</h1>
+        <p class="mt-2 text-neutral-600">View and manage your past trip plans</p>
+      </div>
+      <a href="/" class="inline-flex items-center gap-2 rounded-lg bg-neutral-900 px-4 py-2.5 text-white shadow-sm transition hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-neutral-300">
+        <i data-lucide="plus" class="h-4 w-4"></i>
+        <span class="font-medium">New Trip</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Filters and Search -->
+  <section class="mx-auto max-w-7xl px-6 pb-6">
+    <div class="flex flex-col sm:flex-row gap-4">
+      <!-- Search -->
+      <div class="flex-1 relative">
+        <input id="searchInput" type="text" placeholder="Search destinations, interests..."
+               class="w-full rounded-lg border border-neutral-300 bg-white px-4 py-2.5 pl-10 text-neutral-900 placeholder-neutral-400 shadow-sm outline-none ring-0 focus:border-neutral-400 focus:ring-2 focus:ring-neutral-200" />
+        <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400">
+          <i data-lucide="search" class="h-4.5 w-4.5"></i>
+        </span>
+      </div>
+      
+      <!-- Sort -->
+      <div class="relative">
+        <button id="sortBtn" type="button"
+                class="w-full sm:w-auto inline-flex items-center justify-between gap-2 rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-left text-neutral-900 shadow-sm hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-neutral-200 min-w-[160px]">
+          <span id="sortLabel" class="flex items-center gap-2">
+            <i data-lucide="arrow-up-down" class="h-4 w-4"></i>
+            <span>Newest First</span>
+          </span>
+          <i data-lucide="chevron-down" class="h-4 w-4 text-neutral-500"></i>
+        </button>
+        <div id="sortMenu" class="absolute z-20 mt-2 hidden w-full sm:w-[160px] overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-lg">
+          <button data-sort="newest" class="flex w-full items-center gap-2 px-4 py-2.5 text-sm hover:bg-neutral-50">
+            <i data-lucide="arrow-down" class="h-4 w-4"></i>
+            Newest First
+          </button>
+          <button data-sort="oldest" class="flex w-full items-center gap-2 px-4 py-2.5 text-sm hover:bg-neutral-50">
+            <i data-lucide="arrow-up" class="h-4 w-4"></i>
+            Oldest First
+          </button>
+          <button data-sort="destination" class="flex w-full items-center gap-2 px-4 py-2.5 text-sm hover:bg-neutral-50">
+            <i data-lucide="map-pin" class="h-4 w-4"></i>
+            By Destination
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trip Cards -->
+  <main class="mx-auto max-w-7xl px-6 pb-20">
+    <div id="tripsContainer" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <!-- Trips will be dynamically inserted here -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="hidden text-center py-20">
+      <div class="inline-flex h-16 w-16 items-center justify-center rounded-full bg-neutral-100 text-neutral-400 mb-4">
+        <i data-lucide="map" class="h-8 w-8"></i>
+      </div>
+      <h3 class="text-xl font-semibold tracking-tight text-neutral-900">No trips yet</h3>
+      <p class="mt-2 text-neutral-600 max-w-md mx-auto">Start planning your first trip to see it appear here.</p>
+      <a href="/" class="mt-6 inline-flex items-center gap-2 rounded-lg bg-neutral-900 px-4 py-2.5 text-white shadow-sm transition hover:bg-neutral-800">
+        <i data-lucide="plus" class="h-4 w-4"></i>
+        <span class="font-medium">Plan Your First Trip</span>
+      </a>
+    </div>
+  </main>
+
+  <!-- Trip Detail Modal -->
+  <div id="tripModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div class="flex min-h-full items-center justify-center p-4">
+      <!-- Backdrop -->
+      <div class="fixed inset-0 bg-black/50 transition-opacity" onclick="closeModal()"></div>
+      
+      <!-- Modal Content -->
+      <div class="relative w-full max-w-4xl rounded-xl border border-neutral-200 bg-white shadow-xl">
+        <div class="sticky top-0 z-10 flex items-center justify-between border-b border-neutral-200 bg-white px-6 py-4 rounded-t-xl">
+          <div>
+            <h2 id="modalTitle" class="text-xl font-semibold tracking-tight"></h2>
+            <p id="modalSubtitle" class="mt-1 text-sm text-neutral-600"></p>
+          </div>
+          <button onclick="closeModal()" class="rounded-lg p-2 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-900 transition-colors">
+            <i data-lucide="x" class="h-5 w-5"></i>
+          </button>
+        </div>
+        
+        <div class="px-6 py-6 max-h-[70vh] overflow-y-auto">
+          <div id="modalContent" class="prose max-w-none"></div>
+        </div>
+        
+        <div class="flex items-center justify-between border-t border-neutral-200 bg-neutral-50 px-6 py-4 rounded-b-xl">
+          <button onclick="deleteTrip()" class="inline-flex items-center gap-2 rounded-lg border border-red-300 bg-white px-4 py-2 text-sm text-red-700 hover:bg-red-50 transition-colors">
+            <i data-lucide="trash-2" class="h-4 w-4"></i>
+            Delete
+          </button>
+          <div class="flex items-center gap-3">
+            <button onclick="window.print()" class="inline-flex items-center gap-2 rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm hover:bg-neutral-50 transition-colors">
+              <i data-lucide="printer" class="h-4 w-4"></i>
+              Print
+            </button>
+            <button onclick="replanTrip()" class="inline-flex items-center gap-2 rounded-lg bg-neutral-900 px-4 py-2 text-sm text-white hover:bg-neutral-800 transition-colors">
+              <i data-lucide="refresh-cw" class="h-4 w-4"></i>
+              Replan
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    // Initialize icons
+    function renderIcons() { if (window.lucide) lucide.createIcons(); }
+    renderIcons();
+
+    // State
+    let allTrips = [];
+    let currentSort = 'newest';
+    let currentModalTripId = null;
+
+    // Load trips from localStorage
+    function loadTrips() {
+      const stored = localStorage.getItem('tripHistory');
+      allTrips = stored ? JSON.parse(stored) : [];
+      renderTrips();
+    }
+
+    // Render trips with current filters
+    function renderTrips() {
+      const container = document.getElementById('tripsContainer');
+      const emptyState = document.getElementById('emptyState');
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+      
+      // Filter trips
+      let filtered = allTrips.filter(trip => {
+        if (!searchTerm) return true;
+        const searchable = `${trip.destination} ${trip.interests || ''} ${trip.budget || ''}`.toLowerCase();
+        return searchable.includes(searchTerm);
+      });
+
+      // Sort trips
+      filtered.sort((a, b) => {
+        if (currentSort === 'newest') {
+          return new Date(b.createdAt) - new Date(a.createdAt);
+        } else if (currentSort === 'oldest') {
+          return new Date(a.createdAt) - new Date(b.createdAt);
+        } else if (currentSort === 'destination') {
+          return a.destination.localeCompare(b.destination);
+        }
+        return 0;
+      });
+
+      // Show empty state if no trips
+      if (filtered.length === 0) {
+        container.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      container.classList.remove('hidden');
+      emptyState.classList.add('hidden');
+
+      // Render trip cards
+      container.innerHTML = filtered.map(trip => {
+        const date = new Date(trip.createdAt);
+        const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        const timeStr = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+        
+        return `
+          <div class="group rounded-xl border border-neutral-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer" onclick="openModal('${trip.id}')">
+            <div class="flex items-start justify-between mb-4">
+              <div class="flex-1">
+                <h3 class="text-lg font-semibold tracking-tight text-neutral-900">${escapeHtml(trip.destination)}</h3>
+                <p class="mt-1 text-sm text-neutral-600">${escapeHtml(trip.duration)}</p>
+              </div>
+              <button onclick="event.stopPropagation(); deleteTripById('${trip.id}')" 
+                      class="opacity-0 group-hover:opacity-100 rounded-lg p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-600 transition-all">
+                <i data-lucide="trash-2" class="h-4 w-4"></i>
+              </button>
+            </div>
+            
+            <div class="space-y-2 mb-4">
+              ${trip.budget ? `
+                <div class="inline-flex items-center gap-2 rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-700">
+                  <i data-lucide="wallet" class="h-3.5 w-3.5"></i>
+                  ${escapeHtml(trip.budget)}
+                </div>
+              ` : ''}
+              ${trip.interests ? `
+                <div class="inline-flex items-center gap-2 rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-700 ml-2">
+                  <i data-lucide="sparkles" class="h-3.5 w-3.5"></i>
+                  ${escapeHtml(trip.interests)}
+                </div>
+              ` : ''}
+            </div>
+            
+            <div class="flex items-center justify-between pt-4 border-t border-neutral-100">
+              <div class="flex items-center gap-2 text-xs text-neutral-500">
+                <i data-lucide="calendar" class="h-3.5 w-3.5"></i>
+                <span>${dateStr} at ${timeStr}</span>
+              </div>
+              <div class="inline-flex items-center gap-1 text-xs font-medium text-indigo-600">
+                <span>View Details</span>
+                <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      renderIcons();
+    }
+
+    // Open modal with trip details
+    function openModal(tripId) {
+      const trip = allTrips.find(t => t.id === tripId);
+      if (!trip) return;
+
+      currentModalTripId = tripId;
+      const modal = document.getElementById('tripModal');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalSubtitle = document.getElementById('modalSubtitle');
+      const modalContent = document.getElementById('modalContent');
+
+      modalTitle.textContent = trip.destination;
+      modalSubtitle.textContent = `${trip.duration} • ${trip.budget || 'Budget not specified'} • ${trip.interests || 'No specific interests'}`;
+
+      // Render itinerary content
+      const content = trip.itinerary || 'No itinerary available.';
+      const html = (window.marked && window.marked.parse) ? window.marked.parse(content) : `<pre class="whitespace-pre-wrap">${escapeHtml(content)}</pre>`;
+      modalContent.innerHTML = html;
+
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      renderIcons();
+    }
+
+    // Close modal
+    function closeModal() {
+      const modal = document.getElementById('tripModal');
+      modal.classList.add('hidden');
+      document.body.style.overflow = '';
+      currentModalTripId = null;
+    }
+
+    // Delete trip
+    function deleteTrip() {
+      if (!currentModalTripId) return;
+      deleteTripById(currentModalTripId);
+      closeModal();
+    }
+
+    function deleteTripById(tripId) {
+      if (!confirm('Are you sure you want to delete this trip?')) return;
+      
+      allTrips = allTrips.filter(t => t.id !== tripId);
+      localStorage.setItem('tripHistory', JSON.stringify(allTrips));
+      renderTrips();
+    }
+
+    // Replan trip
+    function replanTrip() {
+      if (!currentModalTripId) return;
+      const trip = allTrips.find(t => t.id === currentModalTripId);
+      if (!trip) return;
+
+      // Store trip data in sessionStorage for the planner to use
+      sessionStorage.setItem('replanData', JSON.stringify({
+        destination: trip.destination,
+        duration: trip.duration,
+        budget: trip.budget,
+        interests: trip.interests
+      }));
+
+      window.location.href = '/';
+    }
+
+    // Sort menu
+    const sortBtn = document.getElementById('sortBtn');
+    const sortMenu = document.getElementById('sortMenu');
+    const sortLabel = document.getElementById('sortLabel');
+
+    sortBtn.addEventListener('click', () => {
+      sortMenu.classList.toggle('hidden');
+    });
+
+    sortMenu.querySelectorAll('button[data-sort]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentSort = btn.getAttribute('data-sort');
+        const label = btn.textContent.trim();
+        sortLabel.innerHTML = btn.innerHTML;
+        sortMenu.classList.add('hidden');
+        renderTrips();
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!sortBtn.contains(e.target) && !sortMenu.contains(e.target)) {
+        sortMenu.classList.add('hidden');
+      }
+    });
+
+    // Search
+    document.getElementById('searchInput').addEventListener('input', () => {
+      renderTrips();
+    });
+
+    // Escape HTML helper
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Initialize
+    loadTrips();
+  </script>
+</body>
+</html>
+
